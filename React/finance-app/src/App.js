@@ -137,8 +137,10 @@ function App() {
           <Button
             bgColor="#1789A3"
             color="white"
-            _hover={{ opacity: "0.7" }}
-            _active={{ opacity: "0.6" }}
+            _hover={isFormValid() ? { bgColor: "#007D99" } : { opacity: "0.3" }}
+            _active={
+              isFormValid() ? { bgColor: "#00576B" } : { opacity: "0.2" }
+            }
             type="submit"
             isDisabled={!isFormValid()}
           >
