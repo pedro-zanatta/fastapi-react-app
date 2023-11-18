@@ -8,7 +8,6 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -30,8 +29,6 @@ function App() {
     const response = await api.get("/transactions/");
     setTransactions(response.data);
   };
-
-  console.log(formData);
 
   useEffect(() => {
     fetchTransactions();
@@ -69,7 +66,6 @@ function App() {
 
   return (
     <Flex flexDir="column">
-      {/* Header */}
       <Flex
         w="100%"
         bgColor="#1789A3"
@@ -83,8 +79,6 @@ function App() {
           Finance App
         </Text>
       </Flex>
-
-      {/* Form */}
       <Flex
         flexDir="column"
         gap="80px"

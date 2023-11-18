@@ -1,0 +1,29 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Node modules
+React/finance-app/node_modules/
+
+# Yarn Plug'n'Play files
+React/finance-app/.pnp
+React/finance-app/.pnp.js
+
+# Ignore SQLite database
+FastAPI/finance.db
+
+# testing
+React/finance-app/coverage/
+
+# production
+React/finance-app/build/
+
+# Local environment files
+React/finance-app/.env.local
+React/finance-app/.env.development.local
+React/finance-app/.env.test.local
+React/finance-app/.env.production.local
+
+# Miscellaneous files
+.DS_Store
+React/finance-app/npm-debug.log*
+React/finance-app/yarn-debug.log*
+React/finance-app/yarn-error.log*
