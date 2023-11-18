@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# Ignore SQLite database
+FastAPI/finance.db
+
 # testing
 /coverage
 
