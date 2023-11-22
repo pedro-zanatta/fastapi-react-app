@@ -13,11 +13,18 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  useToast,
 } from "@chakra-ui/react";
 import api from "./api";
 
 function App() {
   const [transactions, setTransactions] = useState([]);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     amount: "",
     category: "",
@@ -25,6 +32,8 @@ function App() {
     is_income: false,
     date: "",
   });
+  const [removeDescription, setRemoveDescription] = useState("");
+
   const fetchTransactions = async () => {
     const response = await api.get("/transactions/");
     setTransactions(response.data);
@@ -53,6 +62,39 @@ function App() {
       is_income: false,
       date: "",
     });
+    toast({
+      title: "Success",
+      description: "Transaction added",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const handleRemoveTransaction = async (e) => {
+    e.preventDefault();
+    try {
+      await api.delete("/transactions/", {
+        params: { description: removeDescription },
+      });
+      fetchTransactions();
+      toast({
+        title: "Success",
+        description: "Transaction removed",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove transaction",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    setRemoveDescription("");
   };
 
   const isFormValid = () => {
@@ -79,101 +121,134 @@ function App() {
           Finance App
         </Text>
       </Flex>
-      <Flex
-        flexDir="column"
-        gap="80px"
-        padding="50px 16px 50px 16px"
-        w="100%"
-        h="100%"
-        alignItems="center"
-        justifyContent="center"
-        overflowY="auto"
-      >
-        <Flex
-          as="form"
-          onSubmit={handleFormSubmit}
-          maxWidth="380px"
-          width="100%"
-          flexDir="column"
-          gap="24px"
-        >
-          <FormElement
-            type="number"
-            name="amount"
-            title="Amount"
-            placeholder="Amount"
-            value={formData.amount}
-            onChange={handleInputChange}
-          />
-          <FormElement
-            type="text"
-            name="category"
-            title="Category"
-            placeholder="Category"
-            value={formData.category}
-            onChange={handleInputChange}
-          />
-          <FormElement
-            type="text"
-            name="description"
-            title="Description"
-            placeholder="Description"
-            value={formData.description}
-            onChange={handleInputChange}
-          />
-          <CheckboxElement
-            name="is_income"
-            title="Is Income?"
-            isChecked={formData.is_income}
-            onChange={handleInputChange}
-          />
-          <FormElement
-            type="date"
-            name="date"
-            title="Date"
-            value={formData.date}
-            onChange={handleInputChange}
-          />
-          <Button
-            bgColor="#1789A3"
-            color="white"
-            _hover={isFormValid() ? { bgColor: "#007D99" } : { opacity: "0.3" }}
-            _active={
-              isFormValid() ? { bgColor: "#00576B" } : { opacity: "0.2" }
-            }
-            type="submit"
-            isDisabled={!isFormValid()}
-          >
-            Submit
-          </Button>
-        </Flex>
 
-        <TableContainer w="100%" maxWidth="1000px">
-          <Table variant="simple">
-            <TableCaption>Transaction History</TableCaption>
-            <Thead>
-              <Tr>
-                <Th>Amount</Th>
-                <Th>Category</Th>
-                <Th>Description</Th>
-                <Th>Type</Th>
-                <Th>Date</Th>
+      <Tabs isFitted variant="enclosed" mt="6">
+        <TabList mb="1em">
+          <Tab>Add Transaction</Tab>
+          <Tab>Remove Transaction</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel display="flex" justifyContent="center" w="100%">
+            <Flex
+              as="form"
+              onSubmit={handleFormSubmit}
+              maxWidth="380px"
+              width="100%"
+              flexDir="column"
+              gap="24px"
+            >
+              <FormElement
+                type="number"
+                name="amount"
+                title="Amount"
+                placeholder="Amount"
+                value={formData.amount}
+                onChange={handleInputChange}
+              />
+              <FormElement
+                type="text"
+                name="category"
+                title="Category"
+                placeholder="Category"
+                value={formData.category}
+                onChange={handleInputChange}
+              />
+              <FormElement
+                type="text"
+                name="description"
+                title="Description"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleInputChange}
+              />
+              <CheckboxElement
+                name="is_income"
+                title="Is Income?"
+                isChecked={formData.is_income}
+                onChange={handleInputChange}
+              />
+              <FormElement
+                type="date"
+                name="date"
+                title="Date"
+                value={formData.date}
+                onChange={handleInputChange}
+              />
+              <Button
+                bgColor="#1789A3"
+                color="white"
+                _hover={
+                  isFormValid() ? { bgColor: "#007D99" } : { opacity: "0.3" }
+                }
+                _active={
+                  isFormValid() ? { bgColor: "#00576B" } : { opacity: "0.2" }
+                }
+                type="submit"
+                isDisabled={!isFormValid()}
+              >
+                Submit
+              </Button>
+            </Flex>
+          </TabPanel>
+          <TabPanel display="flex" justifyContent="center" w="100%">
+            <Flex
+              as="form"
+              onSubmit={handleRemoveTransaction}
+              maxWidth="380px"
+              width="100%"
+              flexDir="column"
+              gap="24px"
+            >
+              <FormElement
+                type="text"
+                name="removeDescription"
+                title="Remove Description"
+                placeholder="Enter description to remove"
+                value={removeDescription}
+                onChange={(e) => setRemoveDescription(e.target.value)}
+              />
+              <Button
+                bgColor="#1789A3"
+                color="white"
+                _hover={{ bgColor: "#007D99" }}
+                _active={{ bgColor: "#00576B" }}
+                type="submit"
+                isDisabled={!removeDescription}
+              >
+                Remove Transaction
+              </Button>
+            </Flex>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+
+      <TableContainer w="100%" justifyContent="center" my="80px" display="flex">
+        <Table variant="simple" maxWidth="1000px">
+          <TableCaption>Transaction History</TableCaption>
+          <Thead>
+            <Tr>
+              <Th>Id</Th>
+              <Th>Amount</Th>
+              <Th>Category</Th>
+              <Th>Description</Th>
+              <Th>Type</Th>
+              <Th>Date</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {transactions.map((transaction, index) => (
+              <Tr key={index}>
+                <Td>{transaction.id}</Td>
+                <Td>{transaction.amount}</Td>
+                <Td>{transaction.category}</Td>
+                <Td>{transaction.description}</Td>
+                <Td>{transaction.is_income ? "Income" : "Expense"}</Td>
+                <Td>{transaction.date}</Td>
               </Tr>
-            </Thead>
-            <Tbody>
-              {transactions.map((transaction, index) => (
-                <Tr key={index}>
-                  <Td>{transaction.amount}</Td>
-                  <Td>{transaction.category}</Td>
-                  <Td>{transaction.description}</Td>
-                  <Td>{transaction.is_income ? "Income" : "Expense"}</Td>
-                  <Td>{transaction.date}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Flex>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </Flex>
   );
 }
